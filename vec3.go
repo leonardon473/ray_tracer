@@ -2,8 +2,6 @@ package ray_tracer
 
 import "math"
 
-var Zv = Vec3{}
-
 type Vec3 struct {
 	X float64
 	Y float64
@@ -63,10 +61,10 @@ func (v Vec3) Decrease(s float64) Vec3 {
 }
 
 func (v Vec3) length() float64 {
-	return math.Sqrt(v.length_squared())
+	return math.Sqrt(v.LengthSquared())
 }
 
-func (v Vec3) length_squared() float64 {
+func (v Vec3) LengthSquared() float64 {
 	return v.X*v.X + v.Y*v.Y + v.Z*v.Z
 }
 
