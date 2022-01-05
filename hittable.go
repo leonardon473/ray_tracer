@@ -2,7 +2,7 @@ package ray_tracer
 
 type HitRecord struct {
 	point     Point3
-	normal    Vec3
+	Normal    Vec3
 	t         float64
 	frontFace bool
 }
@@ -10,9 +10,9 @@ type HitRecord struct {
 func (rec HitRecord) SetFaceNormal(r Ray, outwardNormal Vec3) {
 	frontFace := r.Direction.Dot(outwardNormal) < 0
 	if frontFace {
-		rec.normal = outwardNormal
+		rec.Normal = outwardNormal
 	} else {
-		rec.normal = outwardNormal.Invert()
+		rec.Normal = outwardNormal.Invert()
 	}
 
 }
