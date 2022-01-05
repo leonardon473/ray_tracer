@@ -1,10 +1,10 @@
 package ray_tracer
 
 type HitRecord struct {
-	point     Point3
+	Point     Point3
 	Normal    Vec3
-	t         float64
-	frontFace bool
+	T         float64
+	FrontFace bool
 }
 
 func (rec HitRecord) SetFaceNormal(r Ray, outwardNormal Vec3) {
