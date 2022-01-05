@@ -3,15 +3,15 @@ package ray_tracer
 import "math"
 
 type Sphere struct {
-	center Point3
-	radius float64
+	Center Point3
+	Radius float64
 }
 
 func (s Sphere) Hit(r Ray, tMin, tMax float64, rec HitRecord) bool {
-	oc := r.Origin.Sub(s.center)
+	oc := r.Origin.Sub(s.Center)
 	a := r.Direction.LengthSquared()
 	halfB := oc.Dot(r.Direction)
-	c := oc.LengthSquared() - s.radius*s.radius
+	c := oc.LengthSquared() - s.Radius*s.Radius
 
 	discriminant := halfB*halfB - a*c
 	if discriminant < 0 {
@@ -29,7 +29,7 @@ func (s Sphere) Hit(r Ray, tMin, tMax float64, rec HitRecord) bool {
 
 	rec.T = root
 	rec.Point = r.At(rec.T)
-	outwardNormal := rec.Point.Sub(s.center).Decrease(s.radius)
+	outwardNormal := rec.Point.Sub(s.Center).Decrease(s.Radius)
 	rec.SetFaceNormal(r, outwardNormal)
 	return true
 }
