@@ -21,7 +21,7 @@ func (s Sphere) Hit(r Ray, tMin, tMax float64, rec *HitRecord) bool {
 
 	root := (-halfB - sqrtD) / a
 	if root < tMin || tMax < root {
-		root := (-halfB + sqrtD) / a
+		root = (-halfB + sqrtD) / a
 		if root < tMin || tMax < root {
 			return false
 		}
