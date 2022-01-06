@@ -8,8 +8,8 @@ type HitRecord struct {
 }
 
 func (rec HitRecord) SetFaceNormal(r Ray, outwardNormal Vec3) {
-	frontFace := r.Direction.Dot(outwardNormal) < 0
-	if frontFace {
+	rec.FrontFace = r.Direction.Dot(outwardNormal) < 0
+	if rec.FrontFace {
 		rec.Normal = outwardNormal
 	} else {
 		rec.Normal = outwardNormal.Invert()
@@ -18,5 +18,5 @@ func (rec HitRecord) SetFaceNormal(r Ray, outwardNormal Vec3) {
 }
 
 type Hittable interface {
-	Hit(r Ray, tMin, tMax float64, rec HitRecord) bool
+	Hit(r Ray, tMin, tMax float64, rec *HitRecord) bool
 }

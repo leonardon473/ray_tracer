@@ -7,7 +7,7 @@ type Sphere struct {
 	Radius float64
 }
 
-func (s Sphere) Hit(r Ray, tMin, tMax float64, rec HitRecord) bool {
+func (s Sphere) Hit(r Ray, tMin, tMax float64, rec *HitRecord) bool {
 	oc := r.Origin.Sub(s.Center)
 	a := r.Direction.LengthSquared()
 	halfB := oc.Dot(r.Direction)
