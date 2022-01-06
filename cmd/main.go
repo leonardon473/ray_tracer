@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/jpeg"
@@ -16,6 +17,11 @@ func main() {
 	imageWidth := 400
 	imageHeight := int(float64(imageWidth) / aspectRadio)
 
+	// World
+	var world r.HittableList
+	world.Add(r.Sphere{Center: r.Point3{Z: -1}, Radius: 0.5})
+	world.Add(r.Sphere{Center: r.Point3{Y: -100.5, Z: -1}, Radius: 100})
+	fmt.Println(world)
 	// Camera
 	viewportHeight := 2.0
 	viewportWidth := aspectRadio * viewportHeight
@@ -34,7 +40,7 @@ func main() {
 			v := float64(j) / (float64(imageHeight) - 1.0)
 			direction := lowerLeftCorner.Add(horizontal.Scale(u)).Add(vertical.Scale(v)).Sub(origin)
 			ray := r.Ray{Origin: origin, Direction: direction}
-			pixelColor := rayColor(ray)
+			pixelColor := rayColor(ray, world)
 			jj := int(mapValue(float64(j), 0, float64(imageHeight), float64(imageHeight), 0))
 			img.Set(i, jj, colorToNRGBA(pixelColor))
 		}
@@ -45,14 +51,13 @@ func main() {
 	}
 }
 
-func rayColor(ray r.Ray) r.Color {
-	t := hitSphere(r.Point3{Z: -1}, 0.5, ray)
-	if t > 0.0 {
-		N := ray.At(t).Sub(r.Vec3{Z: -1}).UnitVector()
-		return r.Color{X: N.X + 1, Y: N.Y + 1, Z: N.Z + 1}.Scale(0.5)
+func rayColor(ray r.Ray, world r.Hittable) r.Color {
+	var rec r.HitRecord
+	if world.Hit(ray, 0, r.Infinity, &rec) {
+		return rec.Normal.Add(r.Color{X: 1, Y: 1, Z: 1}).Scale(0.5)
 	}
 	unitDirection := ray.Direction.UnitVector()
-	t = 0.5 * (unitDirection.Y + 1.0)
+	t := 0.5 * (unitDirection.Y + 1.0)
 	return r.Color{X: 1.0, Y: 1.0, Z: 1.0}.Scale(1.0 - t).Add(r.Color{X: 0.5, Y: 0.7, Z: 1.0}.Scale(t))
 }
 
