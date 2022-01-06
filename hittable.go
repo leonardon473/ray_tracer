@@ -7,7 +7,7 @@ type HitRecord struct {
 	FrontFace bool
 }
 
-func (rec HitRecord) SetFaceNormal(r Ray, outwardNormal Vec3) {
+func (rec *HitRecord) SetFaceNormal(r Ray, outwardNormal Vec3) {
 	rec.FrontFace = r.Direction.Dot(outwardNormal) < 0
 	if rec.FrontFace {
 		rec.Normal = outwardNormal

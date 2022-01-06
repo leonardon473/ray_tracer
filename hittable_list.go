@@ -8,7 +8,7 @@ func (h HittableList) Clear() {
 	h.objects = nil
 }
 
-func (h HittableList) Add(object Hittable) {
+func (h *HittableList) Add(object Hittable) {
 	h.objects = append(h.objects, object)
 }
 
