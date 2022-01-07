@@ -15,8 +15,8 @@ func (l Lambertian) Scatter(rIn *Ray, rec *HitRecord, attenuation *Color, scatte
 		scatterDirection = rec.Normal
 	}
 
-	scattered = &Ray{rec.Point, scatterDirection}
-	attenuation = &l.Albedo
+	*scattered = Ray{rec.Point, scatterDirection}
+	*attenuation = l.Albedo
 	return true
 }
 
@@ -26,7 +26,7 @@ type Metal struct {
 
 func (m Metal) Scatter(rIn *Ray, rec *HitRecord, attenuation *Color, scattered *Ray) bool {
 	reflected := rIn.Direction.UnitVector().Reflect(rec.Normal)
-	scattered = &Ray{rec.Point, reflected}
-	attenuation = &m.Albedo
+	*scattered = Ray{rec.Point, reflected}
+	*attenuation = m.Albedo
 	return scattered.Direction.Dot(rec.Normal) > 0
 }
