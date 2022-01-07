@@ -88,6 +88,11 @@ func (v Vec3) IsNearZero() bool {
 	const s = 1e-8
 	return math.Abs(v.X) < s && math.Abs(v.Y) < s && math.Abs(v.Z) < s
 }
+
+func (v Vec3) Reflect(n Vec3) Vec3 {
+	return v.Sub(n.Scale(v.Dot(n) * 2))
+}
+
 func MakeRandomVec3() Vec3 {
 	return Vec3{X: RandomFloat64(), Y: RandomFloat64(), Z: RandomFloat64()}
 }

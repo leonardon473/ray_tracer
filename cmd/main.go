@@ -52,12 +52,12 @@ func rayColor(ray r.Ray, world r.Hittable, depth int) r.Color {
 		return r.Color{}
 	}
 	if world.Hit(ray, 0.001, r.Infinity, &rec) {
-		target := rec.Point.Add(r.MakeRandomInHemisphere(rec.Normal))
-		return rayColor(
-			r.Ray{Origin: rec.Point, Direction: target.Sub(rec.Point)},
-			world,
-			depth-1,
-		).Scale(0.5)
+		var scattered r.Ray
+		var attenuation r.Color
+		if rec.MatPtr.Scatter(&ray, &rec, &attenuation, &scattered) {
+			return rayColor(scattered, world, depth-1).Mul(attenuation)
+		}
+		return r.Color{}
 	}
 	unitDirection := ray.Direction.UnitVector()
 	t := 0.5 * (unitDirection.Y + 1.0)
