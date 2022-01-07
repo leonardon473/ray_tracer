@@ -84,6 +84,10 @@ func (v Vec3) UnitVector() Vec3 {
 	return v.Decrease(v.length())
 }
 
+func (v Vec3) IsNearZero() bool {
+	const s = 1e-8
+	return math.Abs(v.X) < s && math.Abs(v.Y) < s && math.Abs(v.Z) < s
+}
 func MakeRandomVec3() Vec3 {
 	return Vec3{X: RandomFloat64(), Y: RandomFloat64(), Z: RandomFloat64()}
 }
