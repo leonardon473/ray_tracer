@@ -5,7 +5,7 @@ type Material interface {
 }
 
 type Lambertian struct {
-	albedo Color
+	Albedo Color
 }
 
 func (l Lambertian) Scatter(rIn *Ray, rec *HitRecord, attenuation *Color, scattered *Ray) bool {
@@ -16,17 +16,17 @@ func (l Lambertian) Scatter(rIn *Ray, rec *HitRecord, attenuation *Color, scatte
 	}
 
 	scattered = &Ray{rec.Point, scatterDirection}
-	attenuation = &l.albedo
+	attenuation = &l.Albedo
 	return true
 }
 
 type Metal struct {
-	albedo Color
+	Albedo Color
 }
 
 func (m Metal) Scatter(rIn *Ray, rec *HitRecord, attenuation *Color, scattered *Ray) bool {
 	reflected := rIn.Direction.UnitVector().Reflect(rec.Normal)
 	scattered = &Ray{rec.Point, reflected}
-	attenuation = &m.albedo
+	attenuation = &m.Albedo
 	return scattered.Direction.Dot(rec.Normal) > 0
 }
