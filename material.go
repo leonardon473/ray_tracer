@@ -1,7 +1,7 @@
 package ray_tracer
 
 type Material interface {
-	Scatter(rIn Ray, rec HitRecord, attenuation *Color, scattered *Ray)
+	Scatter(rIn Ray, rec HitRecord, attenuation *Color, scattered *Ray) bool
 }
 
 type Lambertian struct {
@@ -14,7 +14,7 @@ func (l Lambertian) Scatter(rIn Ray, rec HitRecord, attenuation *Color, scattere
 	if scatterDirection.IsNearZero() {
 		scatterDirection = rec.Normal
 	}
-	
+
 	scattered = &Ray{rec.Point, scatterDirection}
 	attenuation = &l.albedo
 	return true
