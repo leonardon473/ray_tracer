@@ -84,5 +84,27 @@ func (v Vec3) UnitVector() Vec3 {
 	return v.Decrease(v.length())
 }
 
+func MakeRandomVec3() Vec3 {
+	return Vec3{X: RandomFloat64(), Y: RandomFloat64(), Z: RandomFloat64()}
+}
+
+func MakeRandomRangeVec3(min, max float64) Vec3 {
+	return Vec3{
+		X: RandomRangeFloat64(min, max),
+		Y: RandomRangeFloat64(min, max),
+		Z: RandomRangeFloat64(min, max),
+	}
+}
+
+func RandomInUnitSphere() Vec3 {
+	for {
+		p := MakeRandomRangeVec3(-1, 1)
+		if p.LengthSquared() >= 1 {
+			continue
+		}
+		return p
+	}
+}
+
 type Point3 = Vec3
 type Color = Vec3

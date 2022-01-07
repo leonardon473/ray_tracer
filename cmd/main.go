@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"image/jpeg"
@@ -22,7 +21,6 @@ func main() {
 	var world r.HittableList
 	world.Add(r.Sphere{Center: r.Point3{Z: -1}, Radius: 0.5})
 	world.Add(r.Sphere{Center: r.Point3{Y: -100.5, Z: -1}, Radius: 100})
-	fmt.Println(world)
 	// Camera
 	cam := r.NewCamera()
 
@@ -49,7 +47,8 @@ func main() {
 func rayColor(ray r.Ray, world r.Hittable) r.Color {
 	var rec r.HitRecord
 	if world.Hit(ray, 0, r.Infinity, &rec) {
-		return rec.Normal.Add(r.Color{X: 1, Y: 1, Z: 1}).Scale(0.5)
+		target := rec.Point.Add(rec.Normal).Add(r.RandomInUnitSphere())
+		return rayColor(r.Ray{Origin: rec.Point, Direction: target.Sub(rec.Point)}, world).Scale(0.5)
 	}
 	unitDirection := ray.Direction.UnitVector()
 	t := 0.5 * (unitDirection.Y + 1.0)
