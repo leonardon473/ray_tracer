@@ -60,7 +60,7 @@ func (v Vec3) Decrease(s float64) Vec3 {
 	return v.Scale(1 / s)
 }
 
-func (v Vec3) length() float64 {
+func (v Vec3) Length() float64 {
 	return math.Sqrt(v.LengthSquared())
 }
 
@@ -81,7 +81,7 @@ func (v Vec3) Cross(v2 Vec3) Vec3 {
 }
 
 func (v Vec3) UnitVector() Vec3 {
-	return v.Decrease(v.length())
+	return v.Decrease(v.Length())
 }
 
 func (v Vec3) IsNearZero() bool {
@@ -132,6 +132,16 @@ func MakeRandomInHemisphere(normal Vec3) Vec3 {
 		return inUnitSphere
 	} else {
 		return inUnitSphere.Invert()
+	}
+}
+
+func MakeRandomInUnitDisk() Vec3 {
+	for {
+		p := Vec3{X: RandomRangeFloat64(-1, 1), Y: RandomRangeFloat64(-1, 1)}
+		if p.LengthSquared() >= 1 {
+			continue
+		}
+		return p
 	}
 }
 
