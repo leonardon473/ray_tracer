@@ -1,5 +1,7 @@
 package ray_tracer
 
+import "math"
+
 type Camera struct {
 	Origin          Point3
 	LowerLeftCorner Point3
@@ -7,10 +9,12 @@ type Camera struct {
 	Vertical        Vec3
 }
 
-func NewCamera() Camera {
-	const aspectRatio = 16.0 / 9.0
-	const viewportHeight = 2.0
-	const viewportWidth = aspectRatio * viewportHeight
+func NewCamera(vfov, aspectRatio float64) Camera {
+	theta := DegreesToRadians(vfov)
+	h := math.Tan(theta / 2)
+	viewportHeight := 2.0 * h
+	viewportWidth := aspectRatio * viewportHeight
+
 	const focalLength = 1.0
 
 	origin := Point3{X: 0, Y: 0, Z: 0}

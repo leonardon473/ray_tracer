@@ -5,7 +5,7 @@ import (
 	"image/color"
 	"image/jpeg"
 	"log"
-	"math"
+	math "math"
 	"os"
 	r "ray_tracer"
 )
@@ -19,20 +19,17 @@ func main() {
 	const maxDepth = 50
 
 	// World
+	R := math.Cos(r.Pi / 4)
 	var world r.HittableList
 
-	materialGround := r.Lambertian{Albedo: r.Color{X: 0.8, Y: 0.8}}
-	materialCenter := r.Lambertian{Albedo: r.Color{X: 0.1, Y: 0.2, Z: 0.5}}
-	materialLeft := r.Dielectric{Ir: 1.5}
-	materialRight := r.MakeMetal(r.Color{X: 0.8, Y: 0.6, Z: 0.2}, 1.0)
+	materialLeft := r.Lambertian{Albedo: r.Color{Z: 1}}
+	materialRight := r.Lambertian{Albedo: r.Color{X: 1}}
 
-	world.Add(r.Sphere{Center: r.Point3{Y: -100.5, Z: -1}, Radius: 100, MatPtr: materialGround})
-	world.Add(r.Sphere{Center: r.Point3{Z: -1}, Radius: 0.5, MatPtr: materialCenter})
-	world.Add(r.Sphere{Center: r.Point3{X: -1, Z: -1}, Radius: 0.5, MatPtr: materialLeft})
-	world.Add(r.Sphere{Center: r.Point3{X: -1, Z: -1}, Radius: -0.4, MatPtr: materialLeft})
-	world.Add(r.Sphere{Center: r.Point3{X: 1, Z: -1}, Radius: 0.5, MatPtr: materialRight})
+	world.Add(r.Sphere{Center: r.Point3{X: -R, Z: -1}, Radius: R, MatPtr: materialLeft})
+	world.Add(r.Sphere{Center: r.Point3{X: R, Z: -1}, Radius: R, MatPtr: materialRight})
+
 	// Camera
-	cam := r.NewCamera()
+	cam := r.NewCamera(90.0, aspectRadio)
 
 	// Render
 	img := image.NewNRGBA(image.Rect(0, 0, imageWidth, imageHeight))
