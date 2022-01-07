@@ -16,6 +16,7 @@ func main() {
 	const aspectRadio = 16.0 / 9.0
 	imageWidth := 400
 	imageHeight := int(float64(imageWidth) / aspectRadio)
+	const samplesPerPixel = 100
 
 	// World
 	var world r.HittableList
@@ -23,26 +24,20 @@ func main() {
 	world.Add(r.Sphere{Center: r.Point3{Y: -100.5, Z: -1}, Radius: 100})
 	fmt.Println(world)
 	// Camera
-	viewportHeight := 2.0
-	viewportWidth := aspectRadio * viewportHeight
-	focalLength := 1.0
-
-	origin := r.Point3{}
-	horizontal := r.Vec3{X: viewportWidth}
-	vertical := r.Vec3{Y: viewportHeight}
-	lowerLeftCorner := origin.Sub(horizontal.Decrease(2)).Sub(vertical.Decrease(2)).Sub(r.Vec3{Z: focalLength})
+	cam := r.NewCamera()
 
 	// Render
 	img := image.NewNRGBA(image.Rect(0, 0, imageWidth, imageHeight))
 	for i := 0; i < imageWidth; i++ {
 		for j := (imageHeight - 1); j >= 0; j-- {
-			u := float64(i) / (float64(imageWidth) - 1.0)
-			v := float64(j) / (float64(imageHeight) - 1.0)
-			direction := lowerLeftCorner.Add(horizontal.Scale(u)).Add(vertical.Scale(v)).Sub(origin)
-			ray := r.Ray{Origin: origin, Direction: direction}
-			pixelColor := rayColor(ray, world)
-			jj := int(mapValue(float64(j), 0, float64(imageHeight), float64(imageHeight), 0))
-			img.Set(i, jj, colorToNRGBA(pixelColor))
+			pixelColor := r.Color{}
+			for s := 0; s < samplesPerPixel; s++ {
+				u := (float64(i) + r.RandomFloat64()) / (float64(imageWidth) - 1.0)
+				v := (float64(j) + r.RandomFloat64()) / (float64(imageHeight) - 1.0)
+				ray := cam.GetRay(u, v)
+				pixelColor = pixelColor.Add(rayColor(ray, world))
+			}
+			writeColor(img, i, j, pixelColor, samplesPerPixel, imageHeight)
 		}
 	}
 
@@ -97,4 +92,23 @@ func SaveImage(filename string, img image.Image) error {
 
 func mapValue(value, fromLow, fromHigh, toLow, toHigh float64) float64 {
 	return (value-fromLow)*(toHigh-toLow)/(fromHigh-fromLow) + toLow
+}
+
+func writeColor(img *image.NRGBA, x, y int, pixelColor r.Color, samplesPerPixel int, imageHeight int) {
+	red := pixelColor.X
+	green := pixelColor.Y
+	blue := pixelColor.Z
+
+	scale := 1.0 / float64(samplesPerPixel)
+	red = red * scale
+	green = green * scale
+	blue = blue * scale
+
+	pixelColor = r.Color{
+		X: r.Clamp(red, 0.0, 0.999),
+		Y: r.Clamp(green, 0.0, 0.999),
+		Z: r.Clamp(blue, 0.0, 0.999),
+	}
+	yy := int(mapValue(float64(y), 0, float64(imageHeight), float64(imageHeight), 0))
+	img.Set(x, yy, colorToNRGBA(pixelColor))
 }
