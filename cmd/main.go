@@ -16,6 +16,7 @@ func main() {
 	imageWidth := 400
 	imageHeight := int(float64(imageWidth) / aspectRadio)
 	const samplesPerPixel = 100
+	const maxDepth = 50
 
 	// World
 	var world r.HittableList
@@ -33,7 +34,7 @@ func main() {
 				u := (float64(i) + r.RandomFloat64()) / (float64(imageWidth) - 1.0)
 				v := (float64(j) + r.RandomFloat64()) / (float64(imageHeight) - 1.0)
 				ray := cam.GetRay(u, v)
-				pixelColor = pixelColor.Add(rayColor(ray, world))
+				pixelColor = pixelColor.Add(rayColor(ray, world, maxDepth))
 			}
 			writeColor(img, i, j, pixelColor, samplesPerPixel, imageHeight)
 		}
@@ -44,11 +45,19 @@ func main() {
 	}
 }
 
-func rayColor(ray r.Ray, world r.Hittable) r.Color {
+func rayColor(ray r.Ray, world r.Hittable, depth int) r.Color {
 	var rec r.HitRecord
+
+	if depth <= 0 {
+		return r.Color{}
+	}
 	if world.Hit(ray, 0, r.Infinity, &rec) {
 		target := rec.Point.Add(rec.Normal).Add(r.RandomInUnitSphere())
-		return rayColor(r.Ray{Origin: rec.Point, Direction: target.Sub(rec.Point)}, world).Scale(0.5)
+		return rayColor(
+			r.Ray{Origin: rec.Point, Direction: target.Sub(rec.Point)},
+			world,
+			depth-1,
+		).Scale(0.5)
 	}
 	unitDirection := ray.Direction.UnitVector()
 	t := 0.5 * (unitDirection.Y + 1.0)
