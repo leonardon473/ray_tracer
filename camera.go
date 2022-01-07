@@ -9,18 +9,20 @@ type Camera struct {
 	Vertical        Vec3
 }
 
-func NewCamera(vfov, aspectRatio float64) Camera {
+func NewCamera(lookFrom, lookAt Point3, viewUp Vec3, vfov, aspectRatio float64) Camera {
 	theta := DegreesToRadians(vfov)
 	h := math.Tan(theta / 2)
 	viewportHeight := 2.0 * h
 	viewportWidth := aspectRatio * viewportHeight
 
-	const focalLength = 1.0
+	w := lookFrom.Sub(lookAt).UnitVector()
+	u := viewUp.Cross(w).UnitVector()
+	v := w.Cross(u)
 
-	origin := Point3{X: 0, Y: 0, Z: 0}
-	horizontal := Vec3{X: viewportWidth, Y: 0, Z: 0}
-	vertical := Vec3{X: 0, Y: viewportHeight, Z: 0}
-	lowerLeftCorner := origin.Sub(horizontal.Decrease(2)).Sub(vertical.Decrease(2)).Sub(Vec3{X: 0, Y: 0, Z: focalLength})
+	origin := lookFrom
+	horizontal := u.Scale(viewportWidth)
+	vertical := v.Scale(viewportHeight)
+	lowerLeftCorner := origin.Sub(horizontal.Decrease(2)).Sub(vertical.Decrease(2)).Sub(w)
 
 	return Camera{
 		Origin:          origin,
@@ -30,9 +32,9 @@ func NewCamera(vfov, aspectRatio float64) Camera {
 	}
 }
 
-func (c Camera) GetRay(u, v float64) Ray {
+func (c Camera) GetRay(s, t float64) Ray {
 	return Ray{
 		Origin:    c.Origin,
-		Direction: c.LowerLeftCorner.Add(c.Horizontal.Scale(u)).Add(c.Vertical.Scale(v)).Sub(c.Origin),
+		Direction: c.LowerLeftCorner.Add(c.Horizontal.Scale(s)).Add(c.Vertical.Scale(t)).Sub(c.Origin),
 	}
 }

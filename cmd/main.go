@@ -19,17 +19,21 @@ func main() {
 	const maxDepth = 50
 
 	// World
-	R := math.Cos(r.Pi / 4)
 	var world r.HittableList
 
-	materialLeft := r.Lambertian{Albedo: r.Color{Z: 1}}
-	materialRight := r.Lambertian{Albedo: r.Color{X: 1}}
+	materialGround := r.Lambertian{Albedo: r.Color{X: 0.8, Y: 0.8, Z: 0.0}}
+	materialCenter := r.Lambertian{Albedo: r.Color{X: 0.1, Y: 0.2, Z: 0.5}}
+	materialLeft := r.Dielectric{Ir: 1.5}
+	materialRight := r.Metal{Albedo: r.Color{X: 0.8, Y: 0.6, Z: 0.2}, Fuzz: 0.0}
 
-	world.Add(r.Sphere{Center: r.Point3{X: -R, Z: -1}, Radius: R, MatPtr: materialLeft})
-	world.Add(r.Sphere{Center: r.Point3{X: R, Z: -1}, Radius: R, MatPtr: materialRight})
+	world.Add(r.Sphere{Center: r.Point3{X: 0.0, Y: -100.5, Z: -1.0}, Radius: 100, MatPtr: materialGround})
+	world.Add(r.Sphere{Center: r.Point3{X: 0.0, Y: 0.0, Z: -1.0}, Radius: 0.5, MatPtr: materialCenter})
+	world.Add(r.Sphere{Center: r.Point3{X: -1.0, Y: 0.0, Z: -1.0}, Radius: 0.5, MatPtr: materialLeft})
+	world.Add(r.Sphere{Center: r.Point3{X: -1.0, Y: 0.0, Z: -1.0}, Radius: -0.45, MatPtr: materialLeft})
+	world.Add(r.Sphere{Center: r.Point3{X: 1.0, Y: 0.0, Z: -1.0}, Radius: 0.5, MatPtr: materialRight})
 
 	// Camera
-	cam := r.NewCamera(90.0, aspectRadio)
+	cam := r.NewCamera(r.Point3{X: -2, Y: 2, Z: 1}, r.Point3{Z: -1}, r.Vec3{Y: 1}, 90.0, aspectRadio)
 
 	// Render
 	img := image.NewNRGBA(image.Rect(0, 0, imageWidth, imageHeight))
