@@ -52,7 +52,7 @@ func rayColor(ray r.Ray, world r.Hittable, depth int) r.Color {
 		return r.Color{}
 	}
 	if world.Hit(ray, 0.001, r.Infinity, &rec) {
-		target := rec.Point.Add(rec.Normal).Add(r.RandomUnitSphere())
+		target := rec.Point.Add(r.MakeRandomInHemisphere(rec.Normal))
 		return rayColor(
 			r.Ray{Origin: rec.Point, Direction: target.Sub(rec.Point)},
 			world,

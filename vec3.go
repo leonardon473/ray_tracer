@@ -110,5 +110,14 @@ func RandomUnitSphere() Vec3 {
 	return RandomInUnitSphere().UnitVector()
 }
 
+func MakeRandomInHemisphere(normal Vec3) Vec3 {
+	inUnitSphere := RandomInUnitSphere()
+	if inUnitSphere.Dot(normal) > 0.0 {
+		return inUnitSphere
+	} else {
+		return inUnitSphere.Invert()
+	}
+}
+
 type Point3 = Vec3
 type Color = Vec3
