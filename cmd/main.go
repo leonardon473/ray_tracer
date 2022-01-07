@@ -12,32 +12,21 @@ import (
 
 func main() {
 	// Image
-	const aspectRadio = 16.0 / 9.0
+	const aspectRadio = 3.0 / 2.0
 	imageWidth := 400
 	imageHeight := int(float64(imageWidth) / aspectRadio)
-	const samplesPerPixel = 100
+	const samplesPerPixel = 500
 	const maxDepth = 50
 
 	// World
-	var world r.HittableList
-
-	materialGround := r.Lambertian{Albedo: r.Color{X: 0.8, Y: 0.8, Z: 0.0}}
-	materialCenter := r.Lambertian{Albedo: r.Color{X: 0.1, Y: 0.2, Z: 0.5}}
-	materialLeft := r.Dielectric{Ir: 1.5}
-	materialRight := r.Metal{Albedo: r.Color{X: 0.8, Y: 0.6, Z: 0.2}, Fuzz: 0.0}
-
-	world.Add(r.Sphere{Center: r.Point3{X: 0.0, Y: -100.5, Z: -1.0}, Radius: 100, MatPtr: materialGround})
-	world.Add(r.Sphere{Center: r.Point3{X: 0.0, Y: 0.0, Z: -1.0}, Radius: 0.5, MatPtr: materialCenter})
-	world.Add(r.Sphere{Center: r.Point3{X: -1.0, Y: 0.0, Z: -1.0}, Radius: 0.5, MatPtr: materialLeft})
-	world.Add(r.Sphere{Center: r.Point3{X: -1.0, Y: 0.0, Z: -1.0}, Radius: -0.45, MatPtr: materialLeft})
-	world.Add(r.Sphere{Center: r.Point3{X: 1.0, Y: 0.0, Z: -1.0}, Radius: 0.5, MatPtr: materialRight})
+	world := randomScene()
 
 	// Camera
-	lookFrom := r.Point3{X: 3, Y: 3, Z: 2}
-	lookAt := r.Point3{Z: -1}
+	lookFrom := r.Point3{X: 13, Y: 2, Z: 3}
+	lookAt := r.Point3{}
 	viewUp := r.Vec3{Y: 1}
-	distToFocus := lookFrom.Sub(lookAt).Length()
-	const aperture = 2.0
+	distToFocus := 10.0
+	const aperture = 0.1
 	cam := r.NewCamera(lookFrom, lookAt, viewUp, 20, aspectRadio, aperture, distToFocus)
 
 	// Render
@@ -121,4 +110,48 @@ func writeColor(img *image.NRGBA, x, y int, pixelColor r.Color, samplesPerPixel 
 	}
 	yy := int(mapValue(float64(y), 0, float64(imageHeight), float64(imageHeight), 0))
 	img.Set(x, yy, colorToNRGBA(pixelColor))
+}
+
+func randomScene() r.HittableList {
+	var world r.HittableList
+
+	groundMaterial := r.Lambertian{Albedo: r.Color{X: 0.5, Y: 0.5, Z: 0.5}}
+	world.Add(r.Sphere{Center: r.Point3{Y: -1000}, Radius: 1000, MatPtr: groundMaterial})
+
+	for a := -11.0; a < 11.0; a++ {
+		for b := -11.0; b < 11.0; b++ {
+			chooseMat := r.RandomFloat64()
+			center := r.Point3{X: a + 0.9*r.RandomFloat64(), Y: 0.2, Z: b + 0.9*r.RandomFloat64()}
+			if center.Sub(r.Point3{X: 4, Y: 0.2}).Length() > 0.9 {
+				var sphereMaterial r.Material
+
+				if chooseMat < 0.8 {
+					// diffuse
+					albedo := r.MakeRandomVec3().Mul(r.MakeRandomVec3())
+					sphereMaterial = r.Lambertian{Albedo: albedo}
+					world.Add(r.Sphere{Center: center, Radius: 0.2, MatPtr: sphereMaterial})
+				} else if chooseMat < 0.95 {
+					// metal
+					albedo := r.MakeRandomRangeVec3(0.5, 1)
+					fuzz := r.RandomRangeFloat64(0, 0.5)
+					sphereMaterial = r.Metal{Albedo: albedo, Fuzz: fuzz}
+					world.Add(r.Sphere{Center: center, Radius: 0.2, MatPtr: sphereMaterial})
+				} else {
+					sphereMaterial = r.Dielectric{Ir: 1.5}
+					world.Add(r.Sphere{Center: center, Radius: 0.2, MatPtr: sphereMaterial})
+				}
+			}
+		}
+	}
+
+	material1 := r.Dielectric{Ir: 1.5}
+	world.Add(r.Sphere{Center: r.Point3{Y: 1}, Radius: 1.0, MatPtr: material1})
+
+	material2 := r.Lambertian{Albedo: r.Color{X: 0.4, Y: 0.2, Z: 0.1}}
+	world.Add(r.Sphere{Center: r.Point3{X: -4, Y: 1}, Radius: 1.0, MatPtr: material2})
+
+	material3 := r.Metal{Albedo: r.Color{X: 0.7, Y: 0.6, Z: 0.5}, Fuzz: 0.0}
+	world.Add(r.Sphere{Center: r.Point3{X: 4, Y: 1}, Radius: 1.0, MatPtr: material3})
+
+	return world
 }
