@@ -33,7 +33,7 @@ func main() {
 	world.Add(r.Sphere{Center: r.Point3{X: 1.0, Y: 0.0, Z: -1.0}, Radius: 0.5, MatPtr: materialRight})
 
 	// Camera
-	cam := r.NewCamera(r.Point3{X: -2, Y: 2, Z: 1}, r.Point3{Z: -1}, r.Vec3{Y: 1}, 90.0, aspectRadio)
+	cam := r.NewCamera(r.Point3{X: -2, Y: 2, Z: 1}, r.Point3{Z: -1}, r.Vec3{Y: 1}, 20.0, aspectRadio)
 
 	// Render
 	img := image.NewNRGBA(image.Rect(0, 0, imageWidth, imageHeight))
