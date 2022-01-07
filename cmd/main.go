@@ -79,19 +79,6 @@ func rayColor(ray r.Ray, world r.Hittable, depth int) r.Color {
 	return r.Color{X: 1.0, Y: 1.0, Z: 1.0}.Scale(1.0 - t).Add(r.Color{X: 0.5, Y: 0.7, Z: 1.0}.Scale(t))
 }
 
-func hitSphere(center r.Point3, radius float64, r r.Ray) float64 {
-	oc := r.Origin.Sub(center)
-	a := r.Direction.LengthSquared()
-	halfB := oc.Dot(r.Direction)
-	c := oc.LengthSquared() - radius*radius
-	discriminant := halfB*halfB - a*c
-	if discriminant < 0 {
-		return -1.0
-	} else {
-		return (-halfB - math.Sqrt(discriminant)) / a
-	}
-}
-
 func colorToNRGBA(rayColor r.Color) color.NRGBA {
 	return color.NRGBA{
 		R: uint8(int(255.999 * rayColor.X)),
