@@ -108,9 +108,9 @@ func writeColor(img *image.NRGBA, x, y int, pixelColor r.Color, samplesPerPixel 
 	blue := pixelColor.Z
 
 	scale := 1.0 / float64(samplesPerPixel)
-	red = red * scale
-	green = green * scale
-	blue = blue * scale
+	red = math.Sqrt(red * scale)
+	green = math.Sqrt(green * scale)
+	blue = math.Sqrt(blue * scale)
 
 	pixelColor = r.Color{
 		X: r.Clamp(red, 0.0, 0.999),
