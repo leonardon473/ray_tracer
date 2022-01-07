@@ -106,5 +106,9 @@ func RandomInUnitSphere() Vec3 {
 	}
 }
 
+func RandomUnitSphere() Vec3 {
+	return RandomInUnitSphere().UnitVector()
+}
+
 type Point3 = Vec3
 type Color = Vec3
