@@ -106,7 +106,7 @@ func RandomInUnitSphere() Vec3 {
 	}
 }
 
-func RandomUnitSphere() Vec3 {
+func RandomUnitVector() Vec3 {
 	return RandomInUnitSphere().UnitVector()
 }
 
