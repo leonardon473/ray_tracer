@@ -22,11 +22,19 @@ func (l Lambertian) Scatter(rIn *Ray, rec *HitRecord, attenuation *Color, scatte
 
 type Metal struct {
 	Albedo Color
+	Fuzz   float64
+}
+
+func MakeMetal(albedo Color, fuzz float64) Metal {
+	if fuzz > 1 {
+		fuzz = 1
+	}
+	return Metal{albedo, fuzz}
 }
 
 func (m Metal) Scatter(rIn *Ray, rec *HitRecord, attenuation *Color, scattered *Ray) bool {
 	reflected := rIn.Direction.UnitVector().Reflect(rec.Normal)
-	*scattered = Ray{rec.Point, reflected}
+	*scattered = Ray{rec.Point, reflected.Add(RandomInUnitSphere().Scale(m.Fuzz))}
 	*attenuation = m.Albedo
 	return scattered.Direction.Dot(rec.Normal) > 0
 }
