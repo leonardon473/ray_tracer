@@ -1,5 +1,7 @@
 package ray_tracer
 
+import "math"
+
 type Material interface {
 	Scatter(rIn *Ray, rec *HitRecord, attenuation *Color, scattered *Ray) bool
 }
@@ -52,8 +54,18 @@ func (d Dielectric) Scatter(rIn *Ray, rec *HitRecord, attenuation *Color, scatte
 		refractionRadio = d.Ir
 	}
 	unitDirection := rIn.Direction.UnitVector()
-	refracted := unitDirection.Refract(rec.Normal, refractionRadio)
-	*scattered = Ray{rec.Point, refracted}
+	cosTheta := math.Min(unitDirection.Invert().Dot(rec.Normal), 1.0)
+	sinTheta := math.Sqrt(1.0 - cosTheta*cosTheta)
+
+	cannotRefract := refractionRadio*sinTheta > 1.0
+	var direction Vec3
+
+	if cannotRefract {
+		direction = unitDirection.Reflect(rec.Normal)
+	} else {
+		direction = unitDirection.Refract(rec.Normal, refractionRadio)
+	}
+	*scattered = Ray{Origin: rec.Point, Direction: direction}
 	return true
 
 }

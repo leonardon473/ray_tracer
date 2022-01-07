@@ -22,7 +22,7 @@ func main() {
 	var world r.HittableList
 
 	materialGround := r.Lambertian{Albedo: r.Color{X: 0.8, Y: 0.8}}
-	materialCenter := r.Dielectric{Ir: 1.5}
+	materialCenter := r.Lambertian{Albedo: r.Color{X: 0.1, Y: 0.2, Z: 0.5}}
 	materialLeft := r.Dielectric{Ir: 2.5}
 	materialRight := r.MakeMetal(r.Color{X: 0.8, Y: 0.6, Z: 0.2}, 1.0)
 
