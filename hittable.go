@@ -3,6 +3,7 @@ package ray_tracer
 type HitRecord struct {
 	Point     Point3
 	Normal    Vec3
+	MatPtr    Material
 	T         float64
 	FrontFace bool
 }
