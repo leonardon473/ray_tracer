@@ -1,5 +1,5 @@
 # Ray tracer in Golang
-Code based in the Online book [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html) written in c++.
+Code based in the online book [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html) written in c++.
 
 ## Final result:
 
